@@ -1,5 +1,4 @@
-import { OptimisticLockError } from "@mikro-orm/core";
-import { Arg, Ctx, Int, Query, Resolver, Mutation } from "type-graphql";
+import { Arg, Ctx, Query, Resolver, Mutation } from "type-graphql";
 import { Post } from "../entities/Post";
 import { MyContext } from "../types";
 
