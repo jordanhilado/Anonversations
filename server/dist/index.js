@@ -13,6 +13,7 @@ const type_graphql_1 = require("type-graphql");
 const hello_1 = require("./resolvers/hello");
 const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
+const cors_1 = __importDefault(require("cors"));
 const main = async () => {
     const orm = await core_1.MikroORM.init(mikro_orm_config_1.default);
     await orm.getMigrator().up();
@@ -21,6 +22,10 @@ const main = async () => {
     const session = require("express-session");
     let RedisStore = require("connect-redis")(session);
     let redisClient = createClient();
+    app.use((0, cors_1.default)({
+        origin: "http://localhost:3000",
+        credentials: true,
+    }));
     app.use(session({
         name: "qid",
         store: new RedisStore({ client: redisClient, disableTouch: true }),
@@ -42,11 +47,7 @@ const main = async () => {
         context: ({ req, res }) => ({ em: orm.em, req, res }),
     });
     await apolloServer.start();
-    const cors = {
-        credentials: true,
-        origin: "https://studio.apollographql.com",
-    };
-    apolloServer.applyMiddleware({ app, cors });
+    apolloServer.applyMiddleware({ app, cors: false });
     app.listen(4000, () => {
         console.log("server started on localhost:4000");
     });
