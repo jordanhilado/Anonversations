@@ -8,7 +8,6 @@ import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
-import cors from "cors";
 
 const main = async () => {
   const orm = await MikroORM.init(microConfig);
@@ -21,13 +20,6 @@ const main = async () => {
 
   let RedisStore = require("connect-redis")(session);
   let redisClient = createClient();
-
-  app.use(
-    cors({
-      origin: "http://localhost:3000",
-      credentials: true,
-    })
-  );
 
   app.use(
     session({
@@ -54,7 +46,12 @@ const main = async () => {
   });
   await apolloServer.start();
 
-  apolloServer.applyMiddleware({ app, cors: false });
+  const cors = {
+    credentials: true,
+    origin: "https://studio.apollographql.com",
+  };
+
+  apolloServer.applyMiddleware({ app, cors });
 
   app.listen(4000, () => {
     console.log("server started on localhost:4000");
