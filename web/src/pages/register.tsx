@@ -23,11 +23,8 @@ const Register: React.FC<registerProps> = ({}) => {
         initialValues={{ username: "", password: "" }}
         onSubmit={async (values, { setErrors }) => {
           const response = await register(values);
-          console.log(response);
           if (response.data?.register.errors) {
-            setErrors({
-              username: "hey im an error",
-            });
+            setErrors(toErrorMap(response.data.register.errors));
           }
         }}
       >
