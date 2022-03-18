@@ -39,7 +39,7 @@ const main = async () => {
         secure: __prod__, // cookie only works in https
       },
       saveUninitialized: false,
-      secret: "sadjhfjksdhfjksdhf",
+      secret: "asdfsdfsdfsdfsdfsdf",
       resave: false,
     })
   );

@@ -37,7 +37,7 @@ const main = async () => {
             secure: constants_1.__prod__,
         },
         saveUninitialized: false,
-        secret: "sadjhfjksdhfjksdhf",
+        secret: "asdfsdfsdfsdfsdfsdf",
         resave: false,
     }));
     const apolloServer = new apollo_server_express_1.ApolloServer({
