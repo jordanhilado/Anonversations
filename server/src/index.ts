@@ -3,12 +3,14 @@ import { MikroORM } from "@mikro-orm/core";
 import { COOKIE_NAME, __prod__ } from "./constants";
 import microConfig from "./mikro-orm.config";
 import express from "express";
+import Redis from "ioredis";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
+import connectRedis from "connect-redis";
 import cors from "cors";
 
 const main = async () => {
@@ -17,11 +19,10 @@ const main = async () => {
 
   const app = express();
 
-  const { createClient } = require("redis");
   const session = require("express-session");
 
-  let RedisStore = require("connect-redis")(session);
-  let redisClient = createClient();
+  let RedisStore = connectRedis(session);
+  let redis = new Redis();
   app.use(
     cors({
       origin: "http://localhost:3000",
@@ -31,7 +32,7 @@ const main = async () => {
   app.use(
     session({
       name: COOKIE_NAME,
-      store: new RedisStore({ client: redisClient, disableTouch: true }),
+      store: new RedisStore({ client: redis, disableTouch: true }),
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
         httpOnly: true,
@@ -54,7 +55,7 @@ const main = async () => {
         // options
       }),
     ],
-    context: ({ req, res }) => ({ em: orm.em, req, res }),
+    context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
   });
   await apolloServer.start();
 
