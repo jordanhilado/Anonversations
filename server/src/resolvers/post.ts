@@ -10,7 +10,7 @@ export class PostResolver {
 
   @Query(() => Post, { nullable: true })
   post(@Arg("id") id: number): Promise<Post | undefined> {
-    return Post.findOne({ where: { id } });
+    return Post.findOne(id);
   }
 
   @Mutation(() => Post)
@@ -24,7 +24,7 @@ export class PostResolver {
     @Arg("id") id: number,
     @Arg("title", () => String, { nullable: true }) title: string
   ): Promise<Post | null> {
-    const post = await Post.findOne({ where: { id } });
+    const post = await Post.findOne(id);
     if (!post) {
       return null;
     }

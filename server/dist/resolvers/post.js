@@ -20,13 +20,13 @@ let PostResolver = class PostResolver {
         return Post_1.Post.find();
     }
     post(id) {
-        return Post_1.Post.findOne({ where: { id } });
+        return Post_1.Post.findOne(id);
     }
     async createPost(title) {
         return Post_1.Post.create({ title }).save();
     }
     async updatePost(id, title) {
-        const post = await Post_1.Post.findOne({ where: { id } });
+        const post = await Post_1.Post.findOne(id);
         if (!post) {
             return null;
         }
