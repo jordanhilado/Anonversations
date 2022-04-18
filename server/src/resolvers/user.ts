@@ -16,7 +16,6 @@ import { validateRegister } from "../utils/validateRegister";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import { getConnection } from "typeorm";
-import { Post } from "../entities/Post";
 
 @ObjectType()
 class FieldError {
@@ -35,16 +34,6 @@ class UserResponse {
   @Field(() => User, { nullable: true })
   user?: User;
 }
-
-export const myDataSource = new DataSource({
-  type: "postgres",
-  database: "anonversations2",
-  username: "postgres",
-  password: "postgres",
-  logging: true,
-  synchronize: true,
-  entities: [Post, User],
-});
 
 @Resolver()
 export class UserResolver {
@@ -153,7 +142,7 @@ export class UserResolver {
     const hashedPassword = await argon2.hash(options.password);
     let user;
     try {
-      const result = await getC
+      const result = await getConnection()
         .createQueryBuilder()
         .insert()
         .into(User)

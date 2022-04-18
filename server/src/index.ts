@@ -9,13 +9,14 @@ import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import connectRedis from "connect-redis";
+import session from "express-session";
 import cors from "cors";
-import { DataSource } from "typeorm";
+import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 
 const main = async () => {
-  const dataSource = new DataSource({
+  const conn = await createConnection({
     type: "postgres",
     database: "anonversations2",
     username: "postgres",
@@ -25,11 +26,7 @@ const main = async () => {
     entities: [Post, User],
   });
 
-  const conn = await dataSource.initialize();
-
   const app = express();
-
-  const session = require("express-session");
 
   let RedisStore = connectRedis(session);
   let redis = new Redis();

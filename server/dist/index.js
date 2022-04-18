@@ -14,12 +14,13 @@ const post_1 = require("./resolvers/post");
 const user_1 = require("./resolvers/user");
 const apollo_server_core_1 = require("apollo-server-core");
 const connect_redis_1 = __importDefault(require("connect-redis"));
+const express_session_1 = __importDefault(require("express-session"));
 const cors_1 = __importDefault(require("cors"));
 const typeorm_1 = require("typeorm");
 const Post_1 = require("./entities/Post");
 const User_1 = require("./entities/User");
 const main = async () => {
-    const dataSource = new typeorm_1.DataSource({
+    const conn = await (0, typeorm_1.createConnection)({
         type: "postgres",
         database: "anonversations2",
         username: "postgres",
@@ -28,16 +29,14 @@ const main = async () => {
         synchronize: true,
         entities: [Post_1.Post, User_1.User],
     });
-    const conn = await dataSource.initialize();
     const app = (0, express_1.default)();
-    const session = require("express-session");
-    let RedisStore = (0, connect_redis_1.default)(session);
+    let RedisStore = (0, connect_redis_1.default)(express_session_1.default);
     let redis = new ioredis_1.default();
     app.use((0, cors_1.default)({
         origin: "http://localhost:3000",
         credentials: true,
     }));
-    app.use(session({
+    app.use((0, express_session_1.default)({
         name: constants_1.COOKIE_NAME,
         store: new RedisStore({ client: redis, disableTouch: true }),
         cookie: {

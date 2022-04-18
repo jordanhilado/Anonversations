@@ -15,7 +15,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserResolver = exports.myDataSource = void 0;
+exports.UserResolver = void 0;
 const User_1 = require("../entities/User");
 const type_graphql_1 = require("type-graphql");
 const argon2_1 = __importDefault(require("argon2"));
@@ -24,7 +24,7 @@ const UsernamePasswordInput_1 = require("./UsernamePasswordInput");
 const validateRegister_1 = require("../utils/validateRegister");
 const sendEmail_1 = require("../utils/sendEmail");
 const uuid_1 = require("uuid");
-const Post_1 = require("../entities/Post");
+const typeorm_1 = require("typeorm");
 let FieldError = class FieldError {
 };
 __decorate([
@@ -51,15 +51,6 @@ __decorate([
 UserResponse = __decorate([
     (0, type_graphql_1.ObjectType)()
 ], UserResponse);
-exports.myDataSource = new DataSource({
-    type: "postgres",
-    database: "anonversations2",
-    username: "postgres",
-    password: "postgres",
-    logging: true,
-    synchronize: true,
-    entities: [Post_1.Post, User_1.User],
-});
 let UserResolver = class UserResolver {
     async changePassword(token, newPassword, { redis, req }) {
         if (newPassword.length <= 3) {
@@ -125,7 +116,7 @@ let UserResolver = class UserResolver {
         const hashedPassword = await argon2_1.default.hash(options.password);
         let user;
         try {
-            const result = await getC
+            const result = await (0, typeorm_1.getConnection)()
                 .createQueryBuilder()
                 .insert()
                 .into(User_1.User)

@@ -9,7 +9,7 @@ export class PostResolver {
   }
 
   @Query(() => Post, { nullable: true })
-  post(@Arg("id") id: number): Promise<Post | null> {
+  post(@Arg("id") id: number): Promise<Post | undefined> {
     return Post.findOne({ where: { id } });
   }
 
