@@ -4,9 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("reflect-metadata");
-const core_1 = require("@mikro-orm/core");
 const constants_1 = require("./constants");
-const mikro_orm_config_1 = __importDefault(require("./mikro-orm.config"));
 const express_1 = __importDefault(require("express"));
 const ioredis_1 = __importDefault(require("ioredis"));
 const apollo_server_express_1 = require("apollo-server-express");
@@ -17,9 +15,20 @@ const user_1 = require("./resolvers/user");
 const apollo_server_core_1 = require("apollo-server-core");
 const connect_redis_1 = __importDefault(require("connect-redis"));
 const cors_1 = __importDefault(require("cors"));
+const typeorm_1 = require("typeorm");
+const Post_1 = require("./entities/Post");
+const User_1 = require("./entities/User");
 const main = async () => {
-    const orm = await core_1.MikroORM.init(mikro_orm_config_1.default);
-    await orm.getMigrator().up();
+    const dataSource = new typeorm_1.DataSource({
+        type: "postgres",
+        database: "anonversations2",
+        username: "postgres",
+        password: "postgres",
+        logging: true,
+        synchronize: true,
+        entities: [Post_1.Post, User_1.User],
+    });
+    const conn = await dataSource.initialize();
     const app = (0, express_1.default)();
     const session = require("express-session");
     let RedisStore = (0, connect_redis_1.default)(session);
@@ -49,7 +58,7 @@ const main = async () => {
         plugins: [
             (0, apollo_server_core_1.ApolloServerPluginLandingPageGraphQLPlayground)({}),
         ],
-        context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
+        context: ({ req, res }) => ({ req, res, redis }),
     });
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: false });

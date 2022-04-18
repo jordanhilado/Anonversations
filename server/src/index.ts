@@ -1,7 +1,5 @@
 import "reflect-metadata";
-import { MikroORM } from "@mikro-orm/core";
 import { COOKIE_NAME, __prod__ } from "./constants";
-import microConfig from "./mikro-orm.config";
 import express from "express";
 import Redis from "ioredis";
 import { ApolloServer } from "apollo-server-express";
@@ -12,10 +10,22 @@ import { UserResolver } from "./resolvers/user";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core";
 import connectRedis from "connect-redis";
 import cors from "cors";
+import { DataSource } from "typeorm";
+import { Post } from "./entities/Post";
+import { User } from "./entities/User";
 
 const main = async () => {
-  const orm = await MikroORM.init(microConfig);
-  await orm.getMigrator().up();
+  const dataSource = new DataSource({
+    type: "postgres",
+    database: "anonversations2",
+    username: "postgres",
+    password: "postgres",
+    logging: true,
+    synchronize: true,
+    entities: [Post, User],
+  });
+
+  const conn = await dataSource.initialize();
 
   const app = express();
 
@@ -55,7 +65,7 @@ const main = async () => {
         // options
       }),
     ],
-    context: ({ req, res }) => ({ em: orm.em, req, res, redis }),
+    context: ({ req, res }) => ({ req, res, redis }),
   });
   await apolloServer.start();
 
