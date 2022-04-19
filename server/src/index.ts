@@ -15,6 +15,7 @@ import { createConnection } from "typeorm";
 import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 
+// switch to TypeORM*
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
