@@ -130,7 +130,6 @@ let UserResolver = class UserResolver {
             user = result.raw[0];
         }
         catch (err) {
-            console.log("err", err);
             if (err.code === "23505") {
                 return {
                     errors: [

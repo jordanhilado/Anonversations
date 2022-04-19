@@ -33,10 +33,6 @@
     "ts-node": "^10.4.0"
   },
   "dependencies": {
-    "@mikro-orm/cli": "^4.5.10",
-    "@mikro-orm/core": "^4.5.10",
-    "@mikro-orm/migrations": "^4.5.10",
-    "@mikro-orm/postgresql": "^4.5.10",
     "apollo-server-express": "^3.6.2",
     "argon2": "^0.28.3",
     "connect-redis": "^6.0.0",
