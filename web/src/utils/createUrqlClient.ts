@@ -23,6 +23,11 @@ const errorExchange: Exchange =
     );
   };
 
+export const simplePagination = {
+  offsetArguemnt = "skip",
+  limitArgument = "limit",
+};
+
 export const createUrqlClient = (ssrExchange: any) => ({
   url: "http://localhost:4000/graphql",
   fetchOptions: {
