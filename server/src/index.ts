@@ -16,7 +16,6 @@ import { Post } from "./entities/Post";
 import { User } from "./entities/User";
 import path from "path";
 
-// again
 const main = async () => {
   const conn = await createConnection({
     type: "postgres",
@@ -29,6 +28,8 @@ const main = async () => {
     entities: [Post, User],
   });
   await conn.runMigrations();
+
+  // await Post.delete({});
 
   const app = express();
 
