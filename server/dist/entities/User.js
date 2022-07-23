@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const type_graphql_1 = require("type-graphql");
 const typeorm_1 = require("typeorm");
-const Entity_1 = require("typeorm/decorator/entity/Entity");
 const Post_1 = require("./Post");
 const Updoot_1 = require("./Updoot");
 let User = class User extends typeorm_1.BaseEntity {
@@ -56,7 +55,7 @@ __decorate([
 ], User.prototype, "updatedAt", void 0);
 User = __decorate([
     (0, type_graphql_1.ObjectType)(),
-    (0, Entity_1.Entity)()
+    (0, typeorm_1.Entity)()
 ], User);
 exports.User = User;
 //# sourceMappingURL=User.js.map
