@@ -52,6 +52,16 @@ let PostResolver = class PostResolver {
     creator(post, { userLoader }) {
         return userLoader.load(post.creatorId);
     }
+    async voteStatus(post, { updootLoader, req }) {
+        if (!req.session.userId) {
+            return null;
+        }
+        const updoot = await updootLoader.load({
+            postId: post.id,
+            userId: req.session.userId,
+        });
+        return updoot ? updoot.value : null;
+    }
     async vote(postId, value, { req }) {
         const isUpdoot = value !== -1;
         const realValue = isUpdoot ? 1 : -1;
@@ -90,21 +100,13 @@ let PostResolver = class PostResolver {
         const realLimit = Math.min(50, limit);
         const realLimitPlusOne = realLimit + 1;
         const replacements = [realLimitPlusOne];
-        if (req.session.userId) {
-            replacements.push(req.session.userId);
-        }
-        let cursorIdx = 3;
         if (cursor) {
             replacements.push(new Date(parseInt(cursor)));
-            cursorIdx = replacements.length;
         }
         const posts = await (0, typeorm_1.getConnection)().query(`
-    select p.*,
-    ${req.session.userId
-            ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"'
-            : 'null as "voteStatus"'}
+    select p.*
     from post p
-    ${cursor ? `where p."createdAt" < $${cursorIdx}` : ""}
+    ${cursor ? `where p."createdAt" < $2` : ""}
     order by p."createdAt" DESC
     limit $1
     `, replacements);
@@ -152,6 +154,14 @@ __decorate([
     __metadata("design:paramtypes", [Post_1.Post, Object]),
     __metadata("design:returntype", void 0)
 ], PostResolver.prototype, "creator", null);
+__decorate([
+    (0, type_graphql_1.FieldResolver)(() => type_graphql_1.Int, { nullable: true }),
+    __param(0, (0, type_graphql_1.Root)()),
+    __param(1, (0, type_graphql_1.Ctx)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Post_1.Post, Object]),
+    __metadata("design:returntype", Promise)
+], PostResolver.prototype, "voteStatus", null);
 __decorate([
     (0, type_graphql_1.Mutation)(() => Boolean),
     (0, type_graphql_1.UseMiddleware)(isAuth_1.isAuth),
